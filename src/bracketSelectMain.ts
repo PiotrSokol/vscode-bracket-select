@@ -117,6 +117,8 @@ function selectText(includeBrack: boolean, selection: vscode.Selection): { start
     var backwardResult = findBackward(searchContext.text, searchContext.backwardStarter);
     var forwardResult = findForward(searchContext.text, searchContext.forwardStarter);
 
+    console.log(`backwardResult.bracket ${backwardResult.bracket}\n backwardResult.bracket ${backwardResult.offset}`);
+    console.log(`forwardResult.bracket ${forwardResult.bracket}\n forwardResult.bracket ${forwardResult.offset}`);
     while (forwardResult != null
         && !isMatch(backwardResult, forwardResult)
         && bracketUtil.isQuoteBracket(forwardResult.bracket)) {
@@ -135,12 +137,12 @@ function selectText(includeBrack: boolean, selection: vscode.Selection): { start
     // we are next to a bracket
     // this is the case for doule press select
     if (backwardStarter == backwardResult.offset && forwardResult.offset == forwardStarter) {
-        selectionStart = backwardStarter - 1;
-        selectionEnd = forwardStarter + 1;
+        selectionStart = backwardStarter - backwardResult.bracket.length;
+        selectionEnd = forwardStarter + forwardResult.bracket.length;
     } else {
         if (includeBrack) {
-            selectionStart = backwardResult.offset - 1;
-            selectionEnd = forwardResult.offset + 1;
+            selectionStart = backwardResult.offset - backwardResult.bracket.length;
+            selectionEnd = forwardResult.offset + forwardResult.bracket.length;
         } else {
             selectionStart = backwardResult.offset;
             selectionEnd = forwardResult.offset;
